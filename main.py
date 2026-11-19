@@ -5,7 +5,7 @@ DATE_LINE = '19.11.2026'
 HERO_KICKER = 'SHENZHEN · APEC'
 HERO = 'TRUMP, XI, PUTIN: THE TRILATERAL MEETS'
 DEK = 'The three nuclear powers at one table in Shenzhen — over Ukraine, Iran and a fragile trade truce.'
-FOOTER = 'MAKE.FUN NEWS IMAGE · 19 NOV 2026 · SOURCES: REUTERS, USNEWS, XINHUA, TIMES OF INDIA, AA'
+FOOTER = 'SOURCES: REUTERS · XINHUA · THE GUARDIAN · JUST SECURITY · TIMES OF INDIA · DEMOCRACY NOW · MAKE.FUN'
 STORIES = [
     ('SHENZHEN · APEC', 'Trilateral convenes; Xi hails open trade, Putin defies sanctions', 'Reuters · Xinhua'),
     ('EUROPE · UKRAINE', 'EU €45bn Ukraine loan on the table; Kyiv braces for winter', 'Reuters · The Guardian'),
@@ -37,8 +37,8 @@ NAVY_MID = (24, 32, 64)
 GROUND = (7, 9, 18)
 GOLD = (232, 184, 109)
 WHITE = (245, 246, 250)
-GREY = (190, 197, 220)
-DIM = (142, 148, 172)
+GREY = (208, 214, 238)
+DIM = (168, 175, 208)
 
 buf = bytearray(W * H * 3)
 
@@ -152,20 +152,22 @@ def panel(x0, y0, x1, y1, fill, edge):
 
 # --- masthead
 rect(0, 0, W, 6, GOLD)
-draw_text(28, 22, 'THE WORLD IN ONE IMAGE', 2, GOLD)
-draw_text(W - text_w(DATE_LINE, 2) - 28, 22, DATE_LINE, 2, GREY)
-draw_text_centered(52, WEEKDAY + ' — ' + BIG_DATE, 2, DIM)
-rect(60, 96, 700, 98, DIM)
+draw_text(40, 20, 'THE WORLD IN ONE IMAGE', 2, GOLD)
+draw_text(W - text_w(DATE_LINE, 2) - 40, 20, DATE_LINE, 2, GREY)
+draw_text_centered(52, WEEKDAY + ' — ' + BIG_DATE, 3, WHITE)
+# full-width divider: gold accent on the left, dim rule after
+rect(40, 96, W - 40, 98, (64, 56, 44))
+rect(40, 94, 200, 100, GOLD)
 
 # --- hero block
-draw_text(60, 118, HERO_KICKER, 2, GOLD)
-hy = 152
-for line in wrap(HERO, 6, 640):
-    draw_text(60, hy, line, 6, WHITE)
-    hy += 7 * 6 + 6
-hy += 8
-for line in wrap(DEK, 2, W - 120):
-    draw_text(60, hy, line, 2, GREY)
+draw_text(40, 116, 'LEAD · ' + HERO_KICKER, 2, GOLD)
+hy = 146
+for line in wrap(HERO, 5, W - 160):
+    draw_text(40, hy, line, 5, WHITE)
+    hy += 7 * 5 + 4
+hy += 6
+for line in wrap(DEK, 2, W - 80):
+    draw_text(40, hy, line, 2, GREY)
     hy += 7 * 2 + 4
 
 # skyline silhouette above the horizon (deterministic)
@@ -181,29 +183,31 @@ while bx < W:
                 set_px(wx, wy, GOLD)
     bx += bw + sky_rng.randrange(4, 18)
 
-# thin divider with APEC glint
-rect(60, 648, W - 60, 650, (70, 60, 44))
+# horizon divider with gold accent
+rect(40, 648, W - 40, 650, (70, 60, 44))
+rect(40, 646, 320, 652, GOLD)
 
 # --- tiles (2 cols x 3 rows) below horizon glow
-col_w = (W - 60 - 24) // 2
-tile_h = 96
-start_y = 672
+col_w = (W - 40 - 32) // 2
+tile_h = 100
+gap = 8
+start_y = 666
 for idx, (kicker, headline, source) in enumerate(STORIES):
     col = idx % 2; row = idx // 2
-    x0 = 30 + col * (col_w + 24)
-    y0 = start_y + row * (tile_h + 10)
-    fill = (17, 21, 40) if row % 2 == 0 else (19, 23, 46)
+    x0 = 40 + col * (col_w + 32)
+    y0 = start_y + row * (tile_h + gap)
+    fill = (24, 29, 56) if row % 2 == 0 else (27, 32, 61)
     panel(x0, y0, x0 + col_w, y0 + tile_h, fill, GOLD)
-    draw_text(x0 + 14, y0 + 10, kicker, 1, GOLD)
-    ty = y0 + 26
-    for line in wrap(headline, 2, col_w - 28):
-        draw_text(x0 + 14, ty, line, 2, WHITE)
-        ty += 7 * 2 + 3
-    draw_text(x0 + 14, y0 + tile_h - 12, source, 1, DIM)
+    draw_text(x0 + 16, y0 + 12, kicker, 1, GOLD)
+    ty = y0 + 30
+    for line in wrap(headline, 2, col_w - 32):
+        draw_text(x0 + 16, ty, line, 2, WHITE)
+        ty += 7 * 2 + 4
+    draw_text(x0 + 16, y0 + tile_h - 13, source, 1, GREY)
 
 # --- footer
-rect(0, H - 26, W, H, (5, 6, 12))
-draw_text_centered(H - 18, FOOTER, 1, GREY)
+rect(0, H - 24, W, H, (5, 6, 12))
+draw_text_centered(H - 17, FOOTER, 1, GREY)
 
 # --- PNG encode
 raw = b''.join(b'\x00' + bytes(buf[y * W * 3:(y + 1) * W * 3]) for y in range(H))
