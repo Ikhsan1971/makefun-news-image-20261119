@@ -75,10 +75,10 @@ for y in range(H):
 
 # stars (deterministic)
 rng = random.Random(SEED)
-for _ in range(420):
+for _ in range(480):
     x = rng.randrange(W); y = rng.randrange(0, 560); r = rng.random()
     a = 0.25 + 0.75 * r
-    size = 1 if r < 0.85 else 2
+    size = 1 if r < 0.8 else 2
     for dy in range(size):
         for dx in range(size):
             blend(x + dx, y + dy, WHITE, a)
@@ -199,7 +199,7 @@ for idx, (kicker, headline, source) in enumerate(STORIES):
 
 # --- footer
 rect(0, H - 26, W, H, (5, 6, 12))
-draw_text_centered(H - 18, FOOTER, 1, DIM)
+draw_text_centered(H - 18, FOOTER, 1, GREY)
 
 # --- PNG encode
 raw = b''.join(b'\x00' + bytes(buf[y * W * 3:(y + 1) * W * 3]) for y in range(H))
