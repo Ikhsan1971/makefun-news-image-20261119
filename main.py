@@ -23,7 +23,11 @@ reports on the day) and renders a 1024x1024 PNG to
 $MAKEFUN_OUTPUT_DIR/entry.png (default /output/entry.png).
 """
 import os, sys, zlib, struct, random
-from _font import FONT
+_here = os.path.dirname(os.path.abspath(__file__))
+with open(os.path.join(_here, '_font.py')) as _fh:
+    _ns = {}
+    exec(_fh.read(), _ns)
+    FONT = _ns['FONT']
 
 W = H = 1024
 OUT = os.path.join(os.environ.get('MAKEFUN_OUTPUT_DIR', '/output'), 'entry.png')
@@ -213,7 +217,10 @@ png = (b'\x89PNG\r\n\x1a\n'
        + chunk(b'IHDR', struct.pack('>IIBBBBB', W, H, 8, 2, 0, 0, 0))
        + chunk(b'IDAT', comp)
        + chunk(b'IEND', b''))
-os.makedirs(os.path.dirname(OUT), exist_ok=True)
+try:
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
+except OSError:
+    pass
 with open(OUT, 'wb') as f:
     f.write(png)
 print('wrote', OUT, len(png), 'bytes')
